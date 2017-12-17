@@ -1,6 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_user import login_required, UserManager, UserMixin, SQLAlchemyAdapter
+import sqlite3 as sql
+
 import os
 
 app = Flask(__name__)
@@ -43,6 +45,19 @@ def index():
 @login_required
 def profile():
     return render_template('flask_user/user_profile.html')
+
+@app.route('/reservation', methods=['POST'])
+@login_required
+def reservation():
+	if request.method=='POST':
+		user = request.form['name']
+		movie = request.form['movie']
+		con = sql.connect("database.db")
+		cur = con.cursor()
+		cur.execute("INSERT INTO reservation (name_user,name_movie) VALUES (?,?)", (user,movie))
+		con.commit()
+		con.close()
+		return redirect('/')
 
 if __name__ == '__main__':
     app.run(debug=True) 
