@@ -2,14 +2,16 @@
 
 {% block content %}
 {% from "flask_user/_macros.html" import render_field, render_checkbox_field, render_submit_field %}
-<h1>{{ current_user.username }}</h1>
 
+<div class="form w3-container w3-card-4 w3-padding-16 w3-white">
+<h1>{{ current_user.username }}</h1>
 <h3>Do you want to:</h3>
 {% if user_manager.enable_change_username %}
-<p><a href="{{ url_for('user.change_username') }}">{%trans%}Change username{%endtrans%}</a></p>
+<button class="w3-button w3-theme"><a href="{{ url_for('user.change_username') }}" style="text-decoration:none;">{%trans%}Change username{%endtrans%}</a></button>
 {% endif %}
 {% if user_manager.enable_change_password %}
-<p><a href="{{ url_for('user.change_password') }}">{%trans%}Change password{%endtrans%}</a></p>
+<button class="w3-button w3-right w3-theme"><a href="{{ url_for('user.change_password') }}" style="text-decoration:none;">{%trans%}Change password{%endtrans%}</a></button>
 {% endif %}
+</div>
 
 {% endblock %}

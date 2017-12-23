@@ -8,6 +8,9 @@
 
     <!-- Bootstrap -->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- In-lining styles to avoid needing a separate .css file -->
     <style>
@@ -25,58 +28,98 @@
     <![endif]-->
   </head>
 
-
 <body>
     {% block body %}
-    <div id="header-div" class="clearfix with-margins">
-        <div class="pull-left"><a href="/"><h3 class="no-margins">Home</h1></a></div>
-        <div class="pull-right">
-            {% if call_or_get(current_user.is_authenticated) %}
-                <a href="{{ url_for('user.profile') }}">{{ current_user.username }}</a>
-                &nbsp; | &nbsp;
-                <a href="{{ url_for('user.logout') }}">Sign out</a>            
-            {% endif %}
-        </div>
-    </div>
-    {% block menu %}
-    <div id="menu-div" class="with-margins">
-        {% if call_or_get(current_user.is_authenticated) %}
-            &nbsp; | &nbsp; <a href="{{ url_for('user.profile') }}">User Profile</a>
-        {% endif %}
-    </div>
-    {% endblock %}
-    <hr class="no-margins"/>
+		<!-- Navbar -->
+		<div class="w3-top" id="header-div">
+			<div class="w3-bar w3-theme-d2 w3-left-align">
+				<a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-hover-white w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
+				<a href="/" class="w3-bar-item w3-button w3-teal" style="text-decoration:none;"><i class="fa fa-home w3-margin-right"></i>DVD Club</a>
+				<a href="/#business" class="w3-bar-item w3-button w3-hide-small w3-hover-white" style="text-decoration:none;">Business</a>
+				<a href="/#products" class="w3-bar-item w3-button w3-hide-small w3-hover-white" style="text-decoration:none;">Products</a>
+				{% if call_or_get(current_user.is_authenticated) %}
+					<a href="/#reservation" class="w3-bar-item w3-button w3-hide-small w3-hover-white" style="text-decoration:none;">Reservation</a>
+				{% endif %}
+				<a href="/#contact" class="w3-bar-item w3-button w3-hide-small w3-hover-white" style="text-decoration:none;">Contact</a>
+				<div class="w3-dropdown-hover w3-hide-small">
+					{% if call_or_get(current_user.is_authenticated) %}
+						<button class="w3-button" title="Notifications" style="text-decoration:none;">{{ current_user.username }} <i class="fa fa-caret-down"></i></button>
+					{% else %}
+						<button class="w3-button" title="Notifications" style="text-decoration:none;">Account <i class="fa fa-caret-down"></i></button>
+					{% endif %}
+					<div class="w3-dropdown-content w3-card-4 w3-bar-block">
+						{% if call_or_get(current_user.is_authenticated) %}
+							<a href="{{ url_for('user.profile') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Edit Profile</a>
+							<a href="{{ url_for('user.logout') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Sign out</a>
+						{% else %}
+							<a href="{{ url_for('user.login') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Login</a>
+							<a href="{{ url_for('user.register') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Register</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
 
-    <div id="main-div" class="with-margins">
-    {# One-time system messages called Flash messages #}
-    {% block flash_messages %}
-        {%- with messages = get_flashed_messages(with_categories=true) -%}
-            {% if messages %}
-                {% for category, message in messages %}
-                    {% if category=='error' %}
-                        {% set category='danger' %}
-                    {% endif %}
-                    <div class="alert alert-{{category}}">{{ message|safe }}</div>
-                {% endfor %}
-            {% endif %}
-        {%- endwith %}
-    {% endblock %}
+			<!-- Navbar on small screens -->
+			<div id="navDemo" class="w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium">
+				<a href="/#business" class="w3-bar-item w3-button" style="text-decoration:none;">Business</a>
+				<a href="/#products" class="w3-bar-item w3-button" style="text-decoration:none;">Products</a>
+				{% if call_or_get(current_user.is_authenticated) %}
+					<a href="/#reservation" class="w3-bar-item w3-button" style="text-decoration:none;">Reservation</a>
+				{% endif %}
+				<a href="/#contact" class="w3-bar-item w3-button" style="text-decoration:none;">Contact</a>
+			</div>
+		</div>
+	{% block menu %}	
+	{% endblock %}
+	<div id="main-div" class="w3-container w3-padding-64">
+		{# One-time system messages called Flash messages #}
+		{% block flash_messages %}
+			{%- with messages = get_flashed_messages(with_categories=true) -%}
+				{% if messages %}
+					{% for category, message in messages %}
+						{% if category=='error' %}
+							{% set category='danger' %}
+						{% endif %}
+						<div class="alert alert-{{category}}">{{ message|safe }}</div>
+					{% endfor %}
+				{% endif %}
+			{%- endwith %}
+		{% endblock %}
 
-    {% block main %}{% block content %}{% endblock %}{% endblock %}
-    </div>
-
-    <br/>
-    <hr class="no-margins"/>
-    <div id="footer-div" class="clearfix with-margins">
-        <div class="pull-left">DVD Club v0.1</div>
-        <div class="pull-right">&copy; 2017 AMC</div>
-    </div>
-    {% endblock %}
-
+		{% block main %}
+			{% block content %}
+			{% endblock %}
+		{% endblock %}
+		{% endblock %}
+	</div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <!-- Bootstrap -->
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script>
+		// Script for side navigation
+		function w3_open() {
+			var x = document.getElementById("mySidebar");
+			x.style.width = "300px";
+			x.style.paddingTop = "10%";
+			x.style.display = "block";
+		}
+
+		// Close side navigation
+		function w3_close() {
+			document.getElementById("mySidebar").style.display = "none";
+		}
+
+		// Used to toggle the menu on smaller screens when clicking on the menu button
+		function openNav() {
+			var x = document.getElementById("navDemo");
+			if (x.className.indexOf("w3-show") == -1) {
+				x.className += " w3-show";
+			} else {
+				x.className = x.className.replace(" w3-show", "");
+			}
+		}
+	</script>
   </body>
 </html>
