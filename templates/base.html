@@ -79,8 +79,8 @@
 					{% for category, message in messages %}
 						{% if category=='error' %}
 							{% set category='danger' %}
+							<div class="alert alert-{{category}}">{{ message|safe }}</div>
 						{% endif %}
-						<div class="alert alert-{{category}}">{{ message|safe }}</div>
 					{% endfor %}
 				{% endif %}
 			{%- endwith %}
