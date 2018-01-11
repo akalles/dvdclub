@@ -4,8 +4,10 @@ cffi==1.11.2
 click==6.7
 Flask==0.12.2
 Flask-Admin==1.5.0
+Flask-Bcrypt==0.7.1
 Flask-Login==0.4.1
 Flask-Mail==0.9.1
+Flask-Principal==0.4.0
 Flask-SQLAlchemy==2.3.2
 Flask-User==0.6.19
 Flask-WTF==0.14.2
@@ -17,3 +19,5 @@ pycparser==2.18
 pycryptodome==3.4.7
 six==1.11.0
 SQLAlchemy==1.1.15
+Werkzeug==0.13
+WTForms==2.1
