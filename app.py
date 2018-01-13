@@ -3,7 +3,6 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_sqlalchemy import SQLAlchemy
 from flask_user import login_required, UserManager, UserMixin, SQLAlchemyAdapter
-from flask_bcrypt import Bcrypt
 import sqlite3 as sql
 
 import os
@@ -23,9 +22,6 @@ app.config['USER_PASSWORD_HASH'] = 'bcrypt'
 db = SQLAlchemy(app)
 admin = Admin(app)
 
-# Flask-Bcrypt: Initialize
-bcrypt = Bcrypt()
-
 class User(db.Model, UserMixin):
         id = db.Column(db.Integer, primary_key=True)
         username = db.Column(db.String(50), nullable=False, unique=True)
@@ -33,18 +29,11 @@ class User(db.Model, UserMixin):
         active = db.Column(db.Boolean(), nullable=False, server_default='0')
         admin = db.Column(db.Boolean(), nullable=False, server_default='0')
 
-        def __init__(self, username, password, active=False, admin=False):
-                """Constructor"""
-                self.username = username
-                self.password = bcrypt.generate_password_hash(password)  # hash submitted password                
-                self.active = active
-                self.admin = admin
-
         def is_admin(self):
                 return self.admin
 
         def __repr__(self):
-                return(self.username)
+                return self.username
 
 class Movie(db.Model, UserMixin):
         id = db.Column(db.Integer, primary_key=True)
@@ -52,7 +41,7 @@ class Movie(db.Model, UserMixin):
         genre = db.Column(db.String(50), nullable=False)
 
         def __repr__(self):
-                return (self.name)
+                return self.name
 
 class Reservation(db.Model, UserMixin):
         id = db.Column(db.Integer, primary_key=True)
