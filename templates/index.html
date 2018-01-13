@@ -27,8 +27,14 @@
 					{% endif %}
 					<div class="w3-dropdown-content w3-card-4 w3-bar-block">
 						{% if call_or_get(current_user.is_authenticated) %}
-							<a href="{{ url_for('user.profile') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Edit Profile</a>
-							<a href="{{ url_for('user.logout') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Sign out</a>
+							{% if call_or_get(current_user.is_admin) %}
+								<a href="{{ url_for('admin.index') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Admin Page</a>
+								<a href="{{ url_for('user.profile') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Edit Profile</a>
+								<a href="{{ url_for('user.logout') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Sign out</a>
+							{% else %}
+								<a href="{{ url_for('user.profile') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Edit Profile</a>
+								<a href="{{ url_for('user.logout') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Sign out</a>
+							{% endif %}
 						{% else %}
 							<a href="{{ url_for('user.login') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Login</a>
 							<a href="{{ url_for('user.register') }}" class="w3-bar-item w3-button" style="text-decoration:none;">Register</a>

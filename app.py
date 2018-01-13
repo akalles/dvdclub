@@ -3,6 +3,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_sqlalchemy import SQLAlchemy
 from flask_user import login_required, UserManager, UserMixin, SQLAlchemyAdapter
+from flask_bcrypt import Bcrypt
 import sqlite3 as sql
 
 import os
@@ -17,17 +18,32 @@ app.config['CSRF_ENABLED'] = True
 app.config['USER_ENABLE_EMAIL'] = False 
 app.config['USER_APP_NAME'] = 'DVD Club'
 app.config['USER_AFTER_LOGOUT_ENDPOINT'] = 'index'
+app.config['USER_PASSWORD_HASH'] = 'bcrypt'
 
 db = SQLAlchemy(app)
 admin = Admin(app)
 
-class User(db.Model, UserMixin):
-	id = db.Column(db.Integer, primary_key=True)
-	username = db.Column(db.String(50), nullable=False, unique=True)
-	password = db.Column(db.String(255), nullable=False, server_default='')
-	active = db.Column(db.Boolean(), nullable=False, server_default='0')
+# Flask-Bcrypt: Initialize
+bcrypt = Bcrypt()
 
-	def __repr__(self):
+class User(db.Model, UserMixin):
+        id = db.Column(db.Integer, primary_key=True)
+        username = db.Column(db.String(50), nullable=False, unique=True)
+        password = db.Column(db.String(255), nullable=False, server_default='')
+        active = db.Column(db.Boolean(), nullable=False, server_default='0')
+        admin = db.Column(db.Boolean(), nullable=False, server_default='0')
+
+        def __init__(self, username, password, active=False, admin=False):
+                """Constructor"""
+                self.username = username
+                self.password = bcrypt.generate_password_hash(password)  # hash submitted password                
+                self.active = active
+                self.admin = admin
+
+        def is_admin(self):
+                return self.admin
+
+        def __repr__(self):
                 return(self.username)
 
 class Movie(db.Model, UserMixin):
@@ -39,23 +55,23 @@ class Movie(db.Model, UserMixin):
                 return (self.name)
 
 class Reservation(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    name_user = db.Column(db.String(50), db.ForeignKey('user.username'), nullable=False)
-    name_movie = db.Column(db.String(100), db.ForeignKey('movie.name'), nullable=False)
-    user = db.relationship('User', backref='user')
-    movie = db.relationship('Movie', backref='movie')
+        id = db.Column(db.Integer, primary_key=True)
+        name_user = db.Column(db.String(50), db.ForeignKey('user.username'), nullable=False)
+        name_movie = db.Column(db.String(100), db.ForeignKey('movie.name'), nullable=False)
+        user = db.relationship('User', backref='user')
+        movie = db.relationship('Movie', backref='movie')
 
 db_adapter = SQLAlchemyAdapter(db, User)
 user_manager = UserManager(db_adapter, app)
 
 class UserView(ModelView):
-	form_columns=['username', 'password', 'active']
+        form_columns=['username', 'password', 'active', 'admin']
 
 class MovieView(ModelView):
-	form_columns=['name', 'genre']
+        form_columns=['name', 'genre']
 
 class ReservationView(ModelView):
-	form_columns=['user', 'movie']
+        form_columns=['user', 'movie']
 
 admin.add_view(UserView(User, db.session))
 admin.add_view(MovieView(Movie, db.session))
@@ -63,25 +79,25 @@ admin.add_view(ReservationView(Reservation, db.session))
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+        return render_template('index.html')
 
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('flask_user/user_profile.html')
+        return render_template('flask_user/user_profile.html')
 
 @app.route('/reservation', methods=['POST'])
 @login_required
 def reservation():
-	if request.method=='POST':
-		user = request.form['name']
-		movie = request.form['movie']
-		con = sql.connect("database.db")
-		cur = con.cursor()
-		cur.execute("INSERT INTO reservation (name_user,name_movie) VALUES (?,?)", (user,movie))
-		con.commit()
-		con.close()
-		return redirect('/')
+        if request.method=='POST':
+                user = request.form['name']
+                movie = request.form['movie']
+                con = sql.connect("database.db")
+                cur = con.cursor()
+                cur.execute("INSERT INTO reservation (name_user,name_movie) VALUES (?,?)", (user,movie))
+                con.commit()
+                con.close()
+                return redirect('/')
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+        app.run(debug=True) 
