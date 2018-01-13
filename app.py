@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect
-from flask_admin import Admin
+from flask_admin import Admin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_sqlalchemy import SQLAlchemy
 from flask_user import login_required, UserManager, UserMixin, SQLAlchemyAdapter
@@ -57,6 +57,11 @@ class Reservation(db.Model, UserMixin):
 db_adapter = SQLAlchemyAdapter(db, User)
 user_manager = UserManager(db_adapter, app)
 
+class MyView(BaseView):
+    @expose('/')
+    def index(self):
+        return redirect('/')
+
 class UserView(sqla.ModelView):
         form_columns=['username', 'active', 'admin']
 
@@ -93,6 +98,7 @@ class MovieView(ModelView):
 class ReservationView(ModelView):
         form_columns=['user', 'movie']
 
+admin.add_view(MyView(name='Back'))
 admin.add_view(UserView(User, db.session))
 admin.add_view(MovieView(Movie, db.session))
 admin.add_view(ReservationView(Reservation, db.session))
