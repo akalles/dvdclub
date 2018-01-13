@@ -123,7 +123,7 @@ def reservation():
                 cur.execute("INSERT INTO reservation (name_user,name_movie) VALUES (?,?)", (user,movie))
                 con.commit()
                 con.close()
-                return redirect('/')
+                return render_template('reservation.html')
 
 if __name__ == '__main__':
         app.run(debug=True) 
